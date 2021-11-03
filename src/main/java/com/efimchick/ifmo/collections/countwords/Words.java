@@ -1,45 +1,47 @@
 package com.efimchick.ifmo.collections.countwords;
-
-
-import com.sun.source.tree.Tree;
-
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Words {
     public String countWords(List<String> lines) {
-        String sum = "";
-        ArrayList<String> allWords = new ArrayList<>(6800);
-        ArrayList<String> uniqumList = new ArrayList<>(2500);
+        StringBuilder sumStr = new StringBuilder();
         HashMap<String, Integer> resultMap = new HashMap<>();
 
-
-        for(String line : lines){
-            String[] lineMass  = line.toLowerCase()
-                    .replaceAll("\\p{P}", "")
-                    .split("\\s");
-
-            for (String word : lineMass) {
-                if (!uniqumList.contains(word) && word.length() >=4 && word.length() <=10 ) {
-                    uniqumList.add(word);
+        for (String s : lines) {
+            String[] arr = s.split("[^а-яА-Яa-zA-Z]");
+            for (String i : arr) {
+                i = i.toLowerCase();
+                if (i.length() >= 4) {
+                    if (resultMap.containsKey(i)) {
+                        resultMap.put(i, resultMap.get(i) + 1);
+                    } else {
+                        resultMap.put(i, 1);
+                    }
                 }
-                allWords.add(word);
             }
         }
-        for (String currentWord : uniqumList){
-            int count = 0;
-            for (String wordsFromAllWords : allWords){
-                if(currentWord.equals(wordsFromAllWords)) count++;
+        Comparator myComp = new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                                        int comparator = o2.getValue().compareTo(o1.getValue());
+                                        if (comparator == 0) {
+                                            comparator = o1.getKey().compareTo(o2.getKey());
+                                        }
+                                        return comparator;
+                                    }
+                                };
+
+        List<Map.Entry<String, Integer>> valueList = new ArrayList(resultMap.entrySet());
+        Collections.sort(valueList, myComp);
+
+        for (Map.Entry<String, Integer> entry : valueList){
+            if(entry.getValue() >= 10) {
+                sumStr.append(entry.getKey() + " - " + entry.getValue() + "\n");
             }
-            resultMap.put(currentWord, count);
-           //sum += currentWord + " - " + count + "\n";
         }
-        LinkedHashMap sortedMap = new LinkedHashMap();
-        ArrayList<Integer> list = new ArrayList<>();
-        for (Map.Entry entry : resultMap.entrySet()) {
-            list.add((Integer) entry.getValue());
-        }
-        Collections.sort(list);
-        Collections.reverse(list);
-        return sum;
+        return sumStr.toString().trim();
     }
 }
+
+//"[^A-Za-zА-Яа-яЁё]+", "" -net
+//"\\p{P}" - ne vse chitaet
