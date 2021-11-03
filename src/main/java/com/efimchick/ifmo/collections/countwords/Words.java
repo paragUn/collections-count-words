@@ -1,5 +1,4 @@
 package com.efimchick.ifmo.collections.countwords;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Words {
@@ -33,7 +32,6 @@ public class Words {
 
         List<Map.Entry<String, Integer>> valueList = new ArrayList(resultMap.entrySet());
         Collections.sort(valueList, myComp);
-
         for (Map.Entry<String, Integer> entry : valueList){
             if(entry.getValue() >= 10) {
                 sumStr.append(entry.getKey() + " - " + entry.getValue() + "\n");
@@ -42,6 +40,3 @@ public class Words {
         return sumStr.toString().trim();
     }
 }
-
-//"[^A-Za-zА-Яа-яЁё]+", "" -net
-//"\\p{P}" - ne vse chitaet
